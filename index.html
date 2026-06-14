@@ -28,30 +28,34 @@
   }
 
   * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; }
-  body { background-color: var(--bg); color: var(--text); padding: 20px; line-height: 1.5; }
+  body { background-color: var(--bg); color: var(--text); padding: 15px; line-height: 1.5; }
   
-  header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; border-bottom: 2px solid var(--border); padding-bottom: 15px; }
-  h1 { font-family: 'Bebas Neue', sans-serif; font-size: 2.5rem; letter-spacing: 2px; color: var(--gold); }
+  header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; border-bottom: 2px solid var(--border); padding-bottom: 15px; flex-wrap: wrap; gap: 15px; }
+  h1 { font-family: 'Bebas Neue', sans-serif; font-size: 2.5rem; letter-spacing: 2px; color: var(--gold); line-height: 1; }
   
-  .tabs { display: flex; gap: 10px; margin-bottom: 20px; }
-  .tab { padding: 10px 20px; background: var(--card); border: 1px solid var(--border); border-radius: 6px; cursor: pointer; font-weight: 600; color: var(--text2); transition: 0.2s; }
+  .tabs { display: flex; gap: 8px; margin-bottom: 20px; overflow-x: auto; padding-bottom: 5px; -webkit-overflow-scrolling: touch; }
+  .tab { padding: 10px 16px; background: var(--card); border: 1px solid var(--border); border-radius: 6px; cursor: pointer; font-weight: 600; color: var(--text2); transition: 0.2s; white-space: nowrap; flex-shrink: 0; font-size: 0.9rem; }
   .tab:hover { background: var(--card2); color: var(--text); }
   .tab.active { background: var(--gold); color: var(--bg); border-color: var(--gold); }
 
   .btn-action { background: var(--blue); color: white; border: none; padding: 10px 18px; font-weight: 600; border-radius: 6px; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; font-size: 0.9rem; transition: 0.2s; }
   .btn-action:hover { opacity: 0.9; transform: translateY(-1px); }
-  .btn-reset { background: #374151; color: var(--text); margin-left: 10px; }
+  .btn-reset { background: #374151; color: var(--text); margin-left: 0; }
 
-  .grid-stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 15px; margin-bottom: 25px; }
-  .stat-card { background: var(--card); border: 1px solid var(--border); border-radius: 8px; padding: 15px; text-align: center; }
-  .stat-card h3 { font-size: 0.85rem; color: var(--text2); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 5px; }
-  .stat-card p { font-size: 1.8rem; font-weight: 700; color: var(--gold); font-family: 'Roboto Mono', monospace; }
+  .grid-stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 12px; margin-bottom: 25px; }
+  .stat-card { background: var(--card); border: 1px solid var(--border); border-radius: 8px; padding: 12px; text-align: center; }
+  .stat-card h3 { font-size: 0.75rem; color: var(--text2); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 5px; }
+  .stat-card p { font-size: 1.5rem; font-weight: 700; color: var(--gold); font-family: 'Roboto Mono', monospace; }
 
-  .view-panel { background: var(--card); border: 1px solid var(--border); border-radius: 8px; padding: 20px; box-shadow: 0 4px 20px rgba(0,0,0,0.3); }
+  .view-panel { background: var(--card); border: 1px solid var(--border); border-radius: 8px; padding: 15px; box-shadow: 0 4px 20px rgba(0,0,0,0.3); }
   
-  table { width: 100%; border-collapse: collapse; text-align: left; }
-  th, td { padding: 12px 15px; border-bottom: 1px solid var(--border); }
-  th { background-color: var(--bg2); color: var(--text2); font-weight: 600; text-transform: uppercase; font-size: 0.85rem; }
+  /* Gör tabellerna skjutbara i sidled på mobilen om de är för breda */
+  .table-responsive { width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; margin-top: 10px; }
+  table { width: 100%; border-collapse: collapse; text-align: left; min-width: 500px; } /* Säkerställer att tabellen inte trycks ihop till oläsbarhet */
+  #panel-tabell table { min-width: 600px; } /* Ledartabellen behöver lite mer rymd */
+  
+  th, td { padding: 10px 12px; border-bottom: 1px solid var(--border); font-size: 0.9rem; }
+  th { background-color: var(--bg2); color: var(--text2); font-weight: 600; text-transform: uppercase; font-size: 0.8rem; }
   tr:hover { background-color: var(--card2); }
 
   .rank-badge { display: inline-block; width: 24px; height: 24px; text-align: center; line-height: 24px; border-radius: 50%; font-weight: 700; font-size: 0.85rem; }
@@ -60,20 +64,36 @@
   .rank-3 { background: var(--bronze); color: var(--bg); }
 
   .score-edit-container { display: flex; align-items: center; gap: 6px; }
-  .input-score { width: 45px; height: 30px; background: var(--bg); border: 1px solid var(--border); color: var(--text); text-align: center; font-weight: bold; font-size: 1rem; border-radius: 4px; font-family: 'Roboto Mono', monospace; }
+  .input-score { width: 48px; height: 36px; background: var(--bg); border: 1px solid var(--border); color: var(--text); text-align: center; font-weight: bold; font-size: 1.1rem; border-radius: 4px; font-family: 'Roboto Mono', monospace; -moz-appearance: textfield; }
+  .input-score::-webkit-outer-spin-button, .input-score::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
   .input-score:focus { border-color: var(--gold); outline: none; background: var(--card2); }
 
-  .select-player { background: var(--bg); color: var(--text); border: 1px solid var(--border); padding: 8px 15px; font-size: 1rem; border-radius: 6px; margin-bottom: 15px; width: 250px; font-weight: 600; }
+  .select-player { background: var(--bg); color: var(--text); border: 1px solid var(--border); padding: 10px 15px; font-size: 1rem; border-radius: 6px; margin-bottom: 15px; width: 100%; max-width: 300px; font-weight: 600; }
   
-  .points-tag { font-family: 'Roboto Mono', monospace; font-weight: 600; padding: 2px 6px; border-radius: 4px; font-size: 0.9rem; }
+  .points-tag { font-family: 'Roboto Mono', monospace; font-weight: 600; padding: 3px 6px; border-radius: 4px; font-size: 0.8rem; white-space: nowrap; }
   .pts-5 { background: rgba(167, 139, 250, 0.2); color: var(--exact); border: 1px solid var(--exact); }
   .pts-4 { background: rgba(59, 130, 246, 0.2); color: #60a5fa; border: 1px solid #60a5fa; }
   .pts-3 { background: rgba(52, 211, 153, 0.2); color: var(--winner); border: 1px solid var(--winner); }
   .pts-1 { background: rgba(157, 176, 200, 0.2); color: var(--silver); border: 1px solid var(--silver); }
   .pts-0 { background: rgba(248, 113, 113, 0.1); color: var(--text2); }
 
-  .toast { position: fixed; bottom: 20px; right: 20px; background: var(--green); color: var(--bg); padding: 12px 24px; border-radius: 6px; font-weight: 700; box-shadow: 0 4px 15px rgba(0,0,0,0.4); display: none; z-index: 1000; animation: fadeInUp 0.3s ease; }
-  @keyframes fadeInUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+  .toast { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background: var(--green); color: var(--bg); padding: 12px 24px; border-radius: 6px; font-weight: 700; box-shadow: 0 4px 15px rgba(0,0,0,0.4); display: none; z-index: 1000; text-align: center; white-space: nowrap; }
+  
+  /* --- MOBILANPASSNINGAR (MEDIA QUERIES) --- */
+  @media (max-width: 600px) {
+    body { padding: 10px; }
+    h1 { font-size: 2rem; }
+    .view-panel { padding: 12px; }
+    .panel-header-flex { flex-direction: column; align-items: flex-start !important; gap: 8px; }
+    
+    /* Dölj mindre viktiga kolumner på mobilen i ledartabellen för att slippa extrem scroll */
+    .hide-mobile { display: none; }
+    #panel-tabell table { min-width: 100%; } 
+    #panel-spelare table { min-width: 100%; }
+    table { min-width: 100%; }
+    
+    th, td { padding: 8px 6px; font-size: 0.85rem; }
+  }
 </style>
 </head>
 <body>
@@ -81,7 +101,7 @@
 <header>
   <div>
     <h1>VM TIPS 2026</h1>
-    <p style="color: var(--text2); font-size: 0.9rem;">USA · MEXICO · KANADA</p>
+    <p style="color: var(--text2); font-size: 0.85rem;">USA · MEXICO · KANADA</p>
   </div>
   <div>
     <button class="btn-action btn-reset" onclick="resetAllScores()" title="Återställer till startresultat">🔄 Återställ</button>
@@ -111,68 +131,74 @@
 
 <!-- PANEL: LEDARTABELL -->
 <div id="panel-tabell" class="view-panel">
-  <h2 style="margin-bottom: 15px; color: var(--gold);">Aktuell Ställning</h2>
-  <table>
-    <thead>
-      <tr>
-        <th style="width: 60px;">Rank</th>
-        <th>Namn</th>
-        <th style="text-align: center; width: 120px;">Total Poäng</th>
-        <th style="text-align: center; color: var(--exact);">Rätt (5p)</th>
-        <th style="text-align: center; color: #60a5fa;">Mål+Vinnare (4p)</th>
-        <th style="text-align: center; color: var(--winner);">Tecken (3p)</th>
-        <th style="text-align: center; color: var(--silver);">Mål (1p)</th>
-        <th style="text-align: center; opacity: 0.6;">Miss (0p)</th>
-      </tr>
-    </thead>
-    <tbody id="leaderboard-body">
-      <!-- Fylls i med JavaScript -->
-    </tbody>
-  </table>
+  <h2 style="margin-bottom: 12px; color: var(--gold); font-size: 1.3rem;">Aktuell Ställning</h2>
+  <div class="table-responsive">
+    <table>
+      <thead>
+        <tr>
+          <th style="width: 50px;">Rank</th>
+          <th>Namn</th>
+          <th style="text-align: center; width: 80px;">Poäng</th>
+          <th style="text-align: center; color: var(--exact);" title="Rätt (5p)">5p</th>
+          <th style="text-align: center; color: #60a5fa;" title="Mål+Vinnare (4p)">4p</th>
+          <th style="text-align: center; color: var(--winner);" title="Tecken (3p)">3p</th>
+          <th style="text-align: center; color: var(--silver);" class="hide-mobile" title="Mål (1p)">1p</th>
+          <th style="text-align: center; opacity: 0.6;" class="hide-mobile" title="Miss (0p)">0p</th>
+        </tr>
+      </thead>
+      <tbody id="leaderboard-body">
+        <!-- Fylls i med JavaScript -->
+      </tbody>
+    </table>
+  </div>
 </div>
 
 <!-- PANEL: MATCHER -->
 <div id="panel-matcher" class="view-panel" style="display: none;">
-  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
-    <h2 style="color: var(--gold);">Matchresultat</h2>
-    <span style="color: var(--text2); font-size: 0.85rem; font-style: italic;">💡 Ändra målen direkt i rutorna nedan för att spara live!</span>
+  <div class="panel-header-flex" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+    <h2 style="color: var(--gold); font-size: 1.3rem;">Matchresultat</h2>
+    <span style="color: var(--text2); font-size: 0.8rem; font-style: italic;">💡 Ändra målen direkt i rutorna</span>
   </div>
-  <table>
-    <thead>
-      <tr>
-        <th style="width: 80px;">ID</th>
-        <th style="text-align: right; width: 35%;">Hemmalag</th>
-        <th style="text-align: center; width: 150px;">Resultat</th>
-        <th style="text-align: left; width: 35%;">Bortalag</th>
-      </tr>
-    </thead>
-    <tbody id="matches-body">
-      <!-- Fylls i med JavaScript -->
-    </tbody>
-  </table>
+  <div class="table-responsive">
+    <table>
+      <thead>
+        <tr>
+          <th style="width: 50px;">ID</th>
+          <th style="text-align: right; width: 40%;">Hemmalag</th>
+          <th style="text-align: center; width: 110px;">Resultat</th>
+          <th style="text-align: left; width: 40%;">Bortalag</th>
+        </tr>
+      </thead>
+      <tbody id="matches-body">
+        <!-- Fylls i med JavaScript -->
+      </tbody>
+    </table>
+  </div>
 </div>
 
 <!-- PANEL: SPELARE -->
 <div id="panel-spelare" class="view-panel" style="display: none;">
-  <h2 style="margin-bottom: 10px; color: var(--gold);">Granska tips per deltagare</h2>
+  <h2 style="margin-bottom: 10px; color: var(--gold); font-size: 1.3rem;">Granska tips per deltagare</h2>
   <select id="player-select" class="select-player" onchange="renderPlayerPredictions()">
     <!-- Alternativ byggs via JS -->
   </select>
   
-  <table>
-    <thead>
-      <tr>
-        <th style="width: 80px;">ID</th>
-        <th>Match</th>
-        <th style="text-align: center;">Tippat</th>
-        <th style="text-align: center;">Utfall</th>
-        <th style="text-align: center;">Poängöversikt</th>
-      </tr>
-    </thead>
-    <tbody id="player-preds-body">
-      <!-- Fylls i med JavaScript -->
-    </tbody>
-  </table>
+  <div class="table-responsive">
+    <table>
+      <thead>
+        <tr>
+          <th style="width: 50px;">ID</th>
+          <th>Match</th>
+          <th style="text-align: center; width: 60px;">Tip</th>
+          <th style="text-align: center; width: 60px;">Res</th>
+          <th style="text-align: center; width: 100px;">Poäng</th>
+        </tr>
+      </thead>
+      <tbody id="player-preds-body">
+        <!-- Fylls i med JavaScript -->
+      </tbody>
+    </table>
+  </div>
 </div>
 
 <div id="toast" class="toast">Sparat & omräknat!</div>
@@ -180,7 +206,6 @@
 <script>
 // --- DATA: LAGKONFIGURATION (72 MATCHER) ---
 const teams1 = ["Mexico", "Sydkorea", "Kanada", "USA", "Qatar", "Brasilien", "Haiti", "Australien", "Tyskland", "Nederländerna", "Elfenbenskusten", "Sverige", "Spanien", "Belgien", "Saudiarabien", "Iran", "Frankrike", "Irak", "Argentina", "Österrike", "Portugal", "England", "Ghana", "Uzbekistan", "Tjeckien", "Schweiz", "Kanada", "Mexico", "USA", "Skottland", "Brasilien", "Turkiet", "Nederländerna", "Tyskland", "Ecuador", "Tunisien", "Spanien", "Belgien", "Uruguay", "Nya Zeeland", "Argentina", "Frankrike", "Norge", "Jordanien", "Portugal", "England", "Panama", "Colombia", "Schweiz", "Bosnien-Hercegovina", "Skottland", "Marocko", "Tjeckien", "Sydafrika", "Curacao", "Ecuador", "Japan", "Sverige", "Turkiet", "Paraguay", "Norge", "Senegal", "Kap Verde", "Uruguay", "Egypten", "Nya Zeeland", "Panama", "Kroatien", "Colombia", "DR Kongo", "Algeriet", "Jordanien"];
-// Korrigerat index 6 och 7 till "Skottland" och "Turkiet" istället för dubbletterna
 const teams2 = ["Sydafrika", "Tjeckien", "Bosnien-Hercegovina", "Paraguay", "Schweiz", "Marocko", "Skottland", "Turkiet", "Curacao", "Japan", "Ecuador", "Tunisien", "Kap Verde", "Egypten", "Uruguay", "Nya Zeeland", "Senegal", "Norge", "Algeriet", "Jordanien", "DR Kongo", "Kroatien", "Panama", "Colombia", "Sydafrika", "Bosnien-Hercegovina", "Qatar", "Sydkorea", "Australien", "Marocko", "Haiti", "Paraguay", "Sverige", "Elfenbenskusten", "Curacao", "Japan", "Saudiarabien", "Iran", "Kap Verde", "Egypten", "Österrike", "Irak", "Senegal", "Algeriet", "Uzbekistan", "Ghana", "Kroatien", "DR Kongo", "Kanada", "Qatar", "Brasilien", "Haiti", "Mexico", "Sydkorea", "Elfenbenskusten", "Tyskland", "Sverige", "Nederländerna", "USA", "Australien", "Frankrike", "Irak", "Saudiarabien", "Spanien", "Iran", "Belgien", "England", "Ghana", "Portugal", "Uzbekistan", "Österrike", "Argentina"];
 
 // --- DATA: DELTAGARE OCH DERAS TIPS (29 STYCKEN) ---
@@ -225,13 +250,12 @@ let players = [];
 function initApp() {
   const baseMatches = [];
   for (let i = 0; i < 72; i++) {
-    // Sätt startresultat på de 4 första matcherna som spelats
     let s1 = null;
     let s2 = null;
-    if (i === 0) { s1 = 2; s2 = 0; } // Match 1: Mexico 2-0 Sydafrika
-    else if (i === 1) { s1 = 2; s2 = 1; } // Match 2: Sydkorea 2-1 Tjeckien
-    else if (i === 2) { s1 = 1; s2 = 1; } // Match 3: Kanada 1-1 Bosnien
-    else if (i === 3) { s1 = 4; s2 = 1; } // Match 4: USA 4-1 Paraguay
+    if (i === 0) { s1 = 2; s2 = 0; }
+    else if (i === 1) { s1 = 2; s2 = 1; }
+    else if (i === 2) { s1 = 1; s2 = 1; }
+    else if (i === 3) { s1 = 4; s2 = 1; }
     
     baseMatches.push({
       id: i + 1,
@@ -242,7 +266,6 @@ function initApp() {
     });
   }
 
-  // Använder ny lokal lagringsnyckel v3 så att gamla sparfiler inte krockar
   const savedMatches = localStorage.getItem('vm_tips_2026_v3');
   if (savedMatches) {
     matches = JSON.parse(savedMatches);
@@ -274,14 +297,14 @@ function initApp() {
 function calculateScores() {
   players.forEach(player => {
     player.totalPoints = 0;
-    player.exactCount = 0;      // 5p
-    player.goalWinnerCount = 0; // 4p
-    player.winnerCount = 0;     // 3p
-    player.goalCount = 0;       // 1p
-    player.missCount = 0;       // 0p
+    player.exactCount = 0;      
+    player.goalWinnerCount = 0; 
+    player.winnerCount = 0;     
+    player.goalCount = 0;       
+    player.missCount = 0;       
 
     matches.forEach((m, i) => {
-      if (m.score1 === null || m.score2 === null) return; // Matchen ej spelad ännu
+      if (m.score1 === null || m.score2 === null) return; 
 
       const [pred1, pred2] = player.predictions[i].split('-').map(Number);
       const act1 = m.score1;
@@ -292,31 +315,24 @@ function calculateScores() {
       const predSign = Math.sign(pred1 - pred2);
       const actSign = Math.sign(act1 - act2);
 
-      // Regelfördelning
       if (pred1 === act1 && pred2 === act2) {
-        // 5 poäng: Rätt resultat
         player.totalPoints += 5;
         player.exactCount++;
       } else if (predSign === actSign && predTotal === actTotal) {
-        // 4 poäng: Rätt vinnare och rätt antal mål i matchen (t.ex. tippat 4-1, blir 3-2)
         player.totalPoints += 4;
         player.goalWinnerCount++;
       } else if (predSign === actSign) {
-        // 3 poäng: Rätt vinnare men fel resultat (eller oavgjort men fel resultat, båda ger samma tecken)
         player.totalPoints += 3;
         player.winnerCount++;
       } else if (predTotal === actTotal) {
-        // 1 poäng: Rätt antal mål i matchen, men fel vinnare/tecken (t.ex tippat 4-0, blir 1-3)
         player.totalPoints += 1;
         player.goalCount++;
       } else {
-        // 0 poäng
         player.missCount++;
       }
     });
   });
 
-  // Sortera: Flest totalpoäng först. Vid lika räknas flest 5-poängare, därefter flest 4-poängare.
   players.sort((a, b) => b.totalPoints - a.totalPoints || b.exactCount - a.exactCount || b.goalWinnerCount - a.goalWinnerCount);
 }
 
@@ -353,8 +369,8 @@ function renderLeaderboard() {
       <td style="text-align: center; color: var(--exact); font-family: 'Roboto Mono';">${p.exactCount}</td>
       <td style="text-align: center; color: #60a5fa; font-family: 'Roboto Mono';">${p.goalWinnerCount}</td>
       <td style="text-align: center; color: var(--winner); font-family: 'Roboto Mono';">${p.winnerCount}</td>
-      <td style="text-align: center; color: var(--silver); font-family: 'Roboto Mono';">${p.goalCount}</td>
-      <td style="text-align: center; color: var(--text2); opacity: 0.5; font-family: 'Roboto Mono';">${p.missCount}</td>
+      <td style="text-align: center; color: var(--silver); font-family: 'Roboto Mono';" class="hide-mobile">${p.goalCount}</td>
+      <td style="text-align: center; color: var(--text2); opacity: 0.5; font-family: 'Roboto Mono';" class="hide-mobile">${p.missCount}</td>
     `;
     tbody.appendChild(tr);
   });
@@ -371,9 +387,9 @@ function renderMatches() {
       <td style="text-align: right; font-weight: 500;">${m.team1}</td>
       <td style="text-align: center;">
         <div class="score-edit-container" style="justify-content: center;">
-          <input type="number" class="input-score" min="0" value="${m.score1 !== null ? m.score1 : ''}" onchange="updateScore(${m.id}, 1, this.value)">
+          <input type="number" inputmode="numeric" class="input-score" min="0" value="${m.score1 !== null ? m.score1 : ''}" onchange="updateScore(${m.id}, 1, this.value)">
           <span style="color: var(--border); font-weight: bold;">-</span>
-          <input type="number" class="input-score" min="0" value="${m.score2 !== null ? m.score2 : ''}" onchange="updateScore(${m.id}, 2, this.value)">
+          <input type="number" inputmode="numeric" class="input-score" min="0" value="${m.score2 !== null ? m.score2 : ''}" onchange="updateScore(${m.id}, 2, this.value)">
         </div>
       </td>
       <td style="text-align: left; font-weight: 500;">${m.team2}</td>
@@ -407,22 +423,22 @@ function renderPlayerPredictions() {
       const actSign = Math.sign(act1 - act2);
 
       if (p1 === act1 && p2 === act2) {
-        pointsHtml = '<span class="points-tag pts-5">5 poäng (Exakt)</span>';
+        pointsHtml = '<span class="points-tag pts-5">5p</span>';
       } else if (predSign === actSign && predTotal === actTotal) {
-        pointsHtml = '<span class="points-tag pts-4">4 poäng (Mål+Tecken)</span>';
+        pointsHtml = '<span class="points-tag pts-4">4p</span>';
       } else if (predSign === actSign) {
-        pointsHtml = '<span class="points-tag pts-3">3 poäng (Tecken)</span>';
+        pointsHtml = '<span class="points-tag pts-3">3p</span>';
       } else if (predTotal === actTotal) {
-        pointsHtml = '<span class="points-tag pts-1">1 poäng (Mål)</span>';
+        pointsHtml = '<span class="points-tag pts-1">1p</span>';
       } else {
-        pointsHtml = '<span class="points-tag pts-0">0 poäng</span>';
+        pointsHtml = '<span class="points-tag pts-0">0p</span>';
       }
     }
 
     const tr = document.createElement('tr');
     tr.innerHTML = `
       <td style="font-family: 'Roboto Mono'; color: var(--text2);">#${m.id}</td>
-      <td>${m.team1} vs ${m.team2}</td>
+      <td style="font-size: 0.85rem;">${m.team1} - ${m.team2}</td>
       <td style="text-align: center; font-family: 'Roboto Mono'; font-weight: 600;">${predStr}</td>
       <td style="text-align: center; font-family: 'Roboto Mono';">${actStr}</td>
       <td style="text-align: center;">${pointsHtml}</td>
@@ -452,43 +468,6 @@ function updateScore(matchId, teamIndex, value) {
     renderPlayerPredictions();
   }
   showToast();
-}
-
-function promptQuickUpdate() {
-  const input = prompt("Skriv in resultat med formatet: MatchID, Mål1-Mål2\nExempel: '5, 2-1' för att registrera 2-1 på match 5:");
-  if (!input) return;
-
-  const parts = input.split(',');
-  if (parts.length < 2) {
-    alert("Felaktigt format. Glöm inte kommatecknet efter Match-ID.");
-    return;
-  }
-
-  const matchId = parseInt(parts[0].trim(), 10);
-  const scores = parts[1].trim().split('-');
-
-  if (isNaN(matchId) || matchId < 1 || matchId > 72 || scores.length !== 2) {
-    alert("Kunde inte tolka inmatningen. Ange giltigt MatchID (1-72) och resultat (t.ex. 2-1).");
-    return;
-  }
-
-  const s1 = parseInt(scores[0].trim(), 10);
-  const s2 = parseInt(scores[1].trim(), 10);
-
-  if (isNaN(s1) || isNaN(s2)) {
-    alert("Målen måste vara siffror.");
-    return;
-  }
-
-  const match = matches.find(m => m.id === matchId);
-  if (match) {
-    match.score1 = s1;
-    match.score2 = s2;
-    localStorage.setItem('vm_tips_2026_v3', JSON.stringify(matches));
-    calculateScores();
-    renderAll();
-    showToast();
-  }
 }
 
 function resetAllScores() {
