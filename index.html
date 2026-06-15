@@ -770,95 +770,205 @@ function renderTomorrowMatches() {
 }
 
 // ============================================================
-// HÄMTA LIVE-RESULTAT VIA ANTHROPIC API
+// HÄMTA LIVE-RESULTAT VIA THESPORTSDB
 // ============================================================
+function normalizeTeamName(name) {
+  if (!name) return '';
+
+  return name
+    .toLowerCase()
+    .replace(/\s+/g, ' ')
+    .trim()
+    .replace('united states', 'usa')
+    .replace('usa', 'usa')
+    .replace('south korea', 'sydkorea')
+    .replace('south africa', 'sydafrika')
+    .replace('new zealand', 'nya zeeland')
+    .replace('ivory coast', 'elfenbenskusten')
+    .replace('cape verde', 'kap verde')
+    .replace('dr congo', 'kongo-kinshasa')
+    .replace('czech republic', 'tjeckien')
+    .replace('switzerland', 'schweiz')
+    .replace('netherlands', 'nederländerna')
+    .replace('mexico', 'mexiko')
+    .replace('england', 'england')
+    .replace('sweden', 'sverige')
+    .replace('germany', 'tyskland')
+    .replace('spain', 'spanien')
+    .replace('france', 'frankrike')
+    .replace('argentina', 'argentina')
+    .replace('brazil', 'brasilien')
+    .replace('belgium', 'belgien')
+    .replace('portugal', 'portugal')
+    .replace('croatia', 'kroatien')
+    .replace('japan', 'japan')
+    .replace('australia', 'australien')
+    .replace('canada', 'kanada')
+    .replace('morocco', 'marocko')
+    .replace('senegal', 'senegal')
+    .replace('uruguay', 'uruguay');
+}
+
 async function fetchLiveScores() {
+
   const btn = document.getElementById('live-fetch-btn');
   const statusEl = document.getElementById('fetch-status-msg');
+
   btn.disabled = true;
   btn.textContent = '⏳ Hämtar...';
+
   statusEl.className = 'fetch-status loading';
-  statusEl.textContent = '⏳ Kontaktar live-tjänst och söker aktuella VM-resultat...';
+  statusEl.textContent = '⏳ Hämtar resultat...';
   statusEl.style.display = 'block';
 
   try {
+
     const today = getSwedishDateStr(new Date());
-    const yesterday = getSwedishDateStr(new Date(Date.now() - 86400000));
 
-    const resp = await fetch('https://api.anthropic.com/v1/messages', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        model: 'claude-sonnet-4-6',
-        max_tokens: 1200,
-        tools: [{ type: 'web_search_20250305', name: 'web_search' }],
-        system: 'You fetch FIFA World Cup 2026 match results. ONLY respond with a valid JSON object, no markdown, no explanations.',
-        messages: [{
-          role: 'user',
-          content: `Search for FIFA World Cup 2026 match results for ${yesterday} and ${today}. 
-Return ONLY this JSON (no code block, no text outside JSON):
-{"updated":"${today}","results":[{"home":"TeamNameInSwedish","away":"TeamNameInSwedish","score1":0,"score2":0}]}
-Use Swedish team names: Mexiko, Sydkorea, Sydafrika, Tjeckien, Kanada, Qatar, Schweiz, Bosnien, USA, Paraguay, Australien, Turkiet, Brasilien, Marocko, Haiti, Skottland, Tyskland, Curaçao, Nederländerna, Japan, Elfenbenskusten, Ecuador, Sverige, Tunisien, Spanien, Kap Verde, Belgien, Egypten, Saudiarabien, Uruguay, Iran, Nya Zeeland, Frankrike, Senegal, Irak, Norge, Argentina, Algeriet, Österrike, Jordanien, Portugal, Kongo-Kinshasa, England, Kroatien, Ghana, Panama, Uzbekistan, Colombia.
-Only include matches that have FINISHED with a real score. If no matches are done, return {"updated":"${today}","results":[]}`
-        }]
-      })
-    });
+    const response = await fetch(
+      `https://www.thesportsdb.com/api/v1/json/3/eventsday.php?d=${today}&s=Soccer`
+    );
 
-    if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
-    const data = await resp.json();
+    if (!response.ok) {
+      throw new Error(`HTTP ${response.status}`);
+    }
 
-    // Extrahera text från content-blocks
-    const text = data.content
-      .filter(c => c.type === 'text')
-      .map(c => c.text).join('');
+    const data = await response.json();
 
-    // Rensa och parsa JSON
-    const clean = text.replace(/```json|```/g, '').trim();
-    const jsonMatch = clean.match(/\{[\s\S]*\}/);
-    if (!jsonMatch) throw new Error('Inget JSON i svaret');
-    const parsed = JSON.parse(jsonMatch[0]);
-
-    if (!parsed.results || !Array.isArray(parsed.results)) throw new Error('Ogiltigt format');
+    if (!data.events || !Array.isArray(data.events)) {
+      throw new Error('Inga matcher hittades');
+    }
 
     let updated = 0;
-    parsed.results.forEach(r => {
-      // Hitta match i schemat
-      const sched = vm2026Schedule.find(s =>
-        (s.home.toLowerCase() === (r.home||'').toLowerCase() && s.away.toLowerCase() === (r.away||'').toLowerCase()) ||
-        (s.home.toLowerCase() === (r.away||'').toLowerCase() && s.away.toLowerCase() === (r.home||'').toLowerCase())
-      );
-      if (sched && sched.id) {
-        const m = matches.find(x => x.id === sched.id);
-        if (m) {
-          const swapped = sched.home.toLowerCase() !== (r.home||'').toLowerCase();
-          m.score1 = swapped ? (r.score2 ?? null) : (r.score1 ?? null);
-          m.score2 = swapped ? (r.score1 ?? null) : (r.score2 ?? null);
-          updated++;
-        }
+
+    data.events.forEach(event => {
+
+      const status =
+        (event.strStatus || '').toUpperCase();
+
+      const isFinished =
+        status === 'FT' ||
+        status === 'AET' ||
+        status === 'PEN' ||
+        status === 'MATCH FINISHED';
+
+      if (!isFinished) return;
+
+      if (
+        event.intHomeScore === null ||
+        event.intAwayScore === null
+      ) {
+        return;
       }
+
+      const home = normalizeTeamName(event.strHomeTeam);
+      const away = normalizeTeamName(event.strAwayTeam);
+
+      const sched = vm2026Schedule.find(s => {
+
+        const schedHome = normalizeTeamName(s.home);
+        const schedAway = normalizeTeamName(s.away);
+
+        return (
+          (schedHome === home && schedAway === away) ||
+          (schedHome === away && schedAway === home)
+        );
+      });
+
+      if (!sched) return;
+
+      const match = matches.find(
+        m => m.id === sched.id
+      );
+
+      if (!match) return;
+
+      const swapped =
+        normalizeTeamName(sched.home) !== home;
+
+      match.score1 = swapped
+        ? Number(event.intAwayScore)
+        : Number(event.intHomeScore);
+
+      match.score2 = swapped
+        ? Number(event.intHomeScore)
+        : Number(event.intAwayScore);
+
+      updated++;
     });
 
-    localStorage.setItem('vm_tips_2026_v3', JSON.stringify(matches));
+    localStorage.setItem(
+      'vm_tips_2026_v3',
+      JSON.stringify(matches)
+    );
+
     calculateScores();
     renderAll();
 
     statusEl.className = 'fetch-status success';
-    statusEl.textContent = `✅ ${updated} matcher uppdaterade! (${new Date().toLocaleTimeString('sv-SE')})`;
+
+    statusEl.textContent =
+      `✅ ${updated} matcher uppdaterade (${new Date().toLocaleTimeString('sv-SE')})`;
+
     btn.textContent = '✅ Klart!';
+
     setTimeout(() => {
-      btn.disabled = false; btn.textContent = '🔄 Hämta Live-resultat';
+
+      btn.disabled = false;
+      btn.textContent = '🔄 Hämta Live-resultat';
       statusEl.style.display = 'none';
+
     }, 4000);
 
   } catch (err) {
+
     console.error('Live fetch error:', err);
+
     statusEl.className = 'fetch-status error';
-    statusEl.innerHTML = `⚠️ Kunde inte hämta automatiskt. <a href="https://www.google.com/search?q=fotbolls+vm+2026+resultat+idag" target="_blank" style="color:#f87171;">Öppna Google för resultat →</a>`;
+
+    statusEl.textContent =
+      '⚠️ Kunde inte hämta resultat automatiskt';
+
     btn.disabled = false;
     btn.textContent = '🔄 Hämta Live-resultat';
-  }
+
+function saveMatches() {
+  localStorage.setItem(
+    'vm_tips_2026_v3',
+    JSON.stringify(matches)
+  );
 }
 
+function saveLastLiveUpdate() {
+  localStorage.setItem(
+    'lastLiveUpdate',
+    new Date().toISOString()
+  );
+}
+
+function showLastLiveUpdate() {
+
+  const el = document.getElementById('last-update');
+
+  if (!el) return;
+
+  const last =
+    localStorage.getItem('lastLiveUpdate');
+
+  if (!last) return;
+
+  el.textContent =
+    'Senast uppdaterad: ' +
+    new Date(last).toLocaleString('sv-SE');
+}
+
+function refreshUI() {
+  calculateScores();
+  renderAll();
+  showLastLiveUpdate();
+}
+  }
+}
 // ============================================================
 // DATAINTERAKTION
 // ============================================================
