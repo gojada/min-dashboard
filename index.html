@@ -477,13 +477,24 @@ function initApp() {
 
   const savedMatches = localStorage.getItem('vm_tips_2026_v3');
   if (savedMatches) {
-    matches = JSON.parse(savedMatches);
+    const savedArr = JSON.parse(savedMatches);
+    // Bygg om matcherna från den AKTUELLA koden (lagnamn etc.) men
+    // återanvänd de resultat (score1/score2) som användaren tidigare matat in.
+    matches = baseMatches.map((bm, idx) => {
+      const saved = savedArr[idx];
+      if (saved && saved.id === bm.id && (saved.score1 !== undefined && saved.score1 !== null || saved.score2 !== undefined && saved.score2 !== null)) {
+        return { ...bm, score1: saved.score1, score2: saved.score2 };
+      }
+      return bm;
+    });
     const known = {0:[2,0],1:[2,1],2:[1,1],3:[4,1],4:[1,1],5:[1,1],6:[0,1],7:[2,0]};
     Object.entries(known).forEach(([idx,res]) => {
       if (matches[idx] && matches[idx].score1 === null) {
         matches[idx].score1 = res[0]; matches[idx].score2 = res[1];
       }
     });
+    // Spara om med uppdaterade lagnamn så framtida laddningar är konsekventa
+    localStorage.setItem('vm_tips_2026_v3', JSON.stringify(matches));
   } else {
     matches = baseMatches;
   }
@@ -929,7 +940,7 @@ function showToast() {
 // CACHE-BUSTER: tvingar fram senaste versionen av sidan
 // ============================================================
 // Höj detta värde (t.ex. datum/tid) varje gång du publicerar en ny version av filen.
-const APP_VERSION = '3';
+const APP_VERSION = '4';
 
 (function cacheBusterCheck() {
   try {
