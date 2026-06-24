@@ -782,22 +782,39 @@ function renderTomorrowMatches() {
 // ============================================================
 function normalizeTeamName(name) {
   if (!name) return '';
-  return name.toLowerCase().replace(/\s+/g, ' ').trim()
-    .replace('united states', 'usa').replace('usa', 'usa')
-    .replace('south korea', 'sydkorea').replace('south africa', 'sydafrika')
-    .replace('new zealand', 'nya zeeland').replace('ivory coast', 'elfenbenskusten')
-    .replace('cape verde', 'kap verde').replace('dr congo', 'kongo-kinshasa')
-    .replace('czech republic', 'tjeckien').replace('switzerland', 'schweiz')
-    .replace('netherlands', 'nederländerna').replace('mexico', 'mexiko')
-    .replace('england', 'england').replace('sweden', 'sverige')
-    .replace('germany', 'tyskland').replace('spain', 'spanien')
-    .replace('france', 'frankrike').replace('argentina', 'argentina')
-    .replace('brazil', 'brasilien').replace('belgium', 'belgien')
-    .replace('portugal', 'portugal').replace('croatia', 'kroatien')
-    .replace('japan', 'japan').replace('australia', 'australien')
-    .replace('canada', 'kanada').replace('morocco', 'marocko')
-    .replace('senegal', 'senegal').replace('uruguay', 'uruguay')
-    .replace('tunisia', 'tunisien');
+  
+  // 1. Tvätta texten först
+  const cleanName = name.toLowerCase().replace(/\s+/g, ' ').trim();
+  
+  // 2. Översättningstabell (allt i små bokstäver)
+  const translations = {
+    'united states': 'usa',
+    'south korea': 'sydkorea',
+    'south africa': 'sydafrika',
+    'new zealand': 'nya zeeland',
+    'ivory coast': 'elfenbenskusten',
+    'cape verde': 'kap verde',
+    'dr congo': 'kongo-kinshasa',
+    'czech republic': 'tjeckien',
+    'switzerland': 'schweiz',
+    'netherlands': 'nederländerna',
+    'mexico': 'mexiko',
+    'sweden': 'sverige',
+    'germany': 'tyskland',
+    'spain': 'spanien',
+    'france': 'frankrike',
+    'brazil': 'brasilien',
+    'belgium': 'belgien',
+    'croatia': 'kroatien',
+    'australia': 'australien',
+    'canada': 'kanada',
+    'morocco': 'marocko',
+    'tunisia': 'tunisien'
+    // Länder som heter samma sak på engelska/svenska (t.ex. Japan, England) behövs inte ens här!
+  };
+
+  // 3. Returnera översättningen om den finns, annars det rensade namnet
+  return translations[cleanName] || cleanName;
 }
 
 async function fetchLiveScores() {
