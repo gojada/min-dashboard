@@ -3,6 +3,10 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<!-- Cache-buster: hindrar webbläsare/proxyservrar från att visa en gammal cachad version -->
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
 <title>🏆VM Tips 2026</title>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@300;400;500;600;700&family=Roboto+Mono:wght@400;600&display=swap" rel="stylesheet">
 <style>
@@ -920,6 +924,29 @@ function showToast() {
   t.style.display='block';
   setTimeout(()=>{ t.style.display='none'; }, 2000);
 }
+
+// ============================================================
+// CACHE-BUSTER: tvingar fram senaste versionen av sidan
+// ============================================================
+// Höj detta värde (t.ex. datum/tid) varje gång du publicerar en ny version av filen.
+const APP_VERSION = '2026.06.24.2';
+
+(function cacheBusterCheck() {
+  try {
+    const storedVersion = localStorage.getItem('vm_tips_app_version');
+    if (storedVersion && storedVersion !== APP_VERSION) {
+      // Ny version upptäckt -> uppdatera sparad version och tvinga en hård omladdning
+      localStorage.setItem('vm_tips_app_version', APP_VERSION);
+      const url = new URL(window.location.href);
+      url.searchParams.set('v', APP_VERSION);
+      window.location.replace(url.toString());
+      return;
+    }
+    localStorage.setItem('vm_tips_app_version', APP_VERSION);
+  } catch (e) {
+    console.warn('Cache-buster kunde inte köras:', e);
+  }
+})();
 
 window.onload = initApp;
 </script>
